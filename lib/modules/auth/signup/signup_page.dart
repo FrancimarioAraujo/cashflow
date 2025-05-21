@@ -6,7 +6,6 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:cashflow/shared/validators/complete_name_validator.dart';
 import 'package:cashflow/shared/validators/email_validator.dart';
 import 'package:cashflow/shared/validators/password_validator.dart';
-import 'package:cashflow/shared/validators/username_validator.dart';
 
 class SignUpPage extends StatefulWidget {
   @override
