@@ -1,3 +1,8 @@
+import 'package:cashflow/modules/auth/auth_controller.dart';
+import 'package:cashflow/shared/components/alert_dialog_custom_exception_component.dart';
+import 'package:cashflow/shared/components/alert_dialog_info_component.dart';
+import 'package:cashflow/shared/exceptions/custom_exception.dart';
+import 'package:cashflow/shared/models/action_model.dart';
 import 'package:cashflow/shared/theme/constants/app_border_radius.dart';
 import 'package:cashflow/shared/theme/constants/app_colors.dart';
 import 'package:cashflow/shared/theme/constants/app_paddings.dart';
@@ -19,6 +24,7 @@ class _SignUpPageState extends State<SignUpPage> {
       TextEditingController();
   final TextEditingController _completeName = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  final AuthController _authController = Modular.get<AuthController>();
 
   @override
   Widget build(BuildContext context) {
@@ -173,10 +179,18 @@ class _SignUpPageState extends State<SignUpPage> {
                                             borderRadius: AppBorderRadius.large,
                                           ),
                                         ),
-                                        onPressed: () {
+                                        onPressed: () async {
                                           if (_formKey.currentState!
                                               .validate()) {
-                                            // Lógica de cadastro
+                                            await createUser(
+                                              name: _completeName.text,
+                                              email: _emailController.text,
+                                              password:
+                                                  _passwordController.text,
+                                              confirmPassword:
+                                                  _confirmPasswordController
+                                                      .text,
+                                            );
                                           }
                                         },
                                         child: const Text(
@@ -212,5 +226,54 @@ class _SignUpPageState extends State<SignUpPage> {
         ),
       ),
     );
+  }
+
+  Future<void> createUser({
+    required String name,
+    required String email,
+    required String password,
+    required String confirmPassword,
+  }) async {
+    try {
+      if (_formKey.currentState!.validate()) {
+        await _authController
+            .createUser(
+              name: name,
+              email: email,
+              password: password,
+              confirmPassword: confirmPassword,
+            )
+            .then((value) async {
+              await showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialogInfoComponent(
+                    title: "Cadastrado com sucesso!",
+                    description:
+                        "Agora você pode fazer login e começar a usar o aplicativo.",
+                    actions: [
+                      ActionModel(
+                        title: "Fazer Login",
+                        onTap: () {
+                          Modular.to.pushNamed('/auth');
+                        },
+                      ),
+                    ],
+                    alertDialogType: AlertDialogType.info,
+                  );
+                },
+              );
+            });
+      }
+    } on CustomException catch (customException) {
+      await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialogCustomExceptionComponent(
+            customException: customException,
+          );
+        },
+      );
+    }
   }
 }

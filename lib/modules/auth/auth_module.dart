@@ -1,3 +1,5 @@
+import 'package:cashflow/modules/auth/auth_controller.dart';
+import 'package:cashflow/modules/auth/auth_repository.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:cashflow/modules/auth/forgot_password/forgot_password_page.dart';
 import 'package:cashflow/modules/auth/signup/signup_page.dart';

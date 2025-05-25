@@ -1,3 +1,6 @@
+import 'package:cashflow/modules/auth/auth_controller.dart';
+import 'package:cashflow/shared/components/alert_dialog_custom_exception_component.dart';
+import 'package:cashflow/shared/exceptions/custom_exception.dart';
 import 'package:cashflow/shared/theme/constants/app_border_radius.dart';
 import 'package:cashflow/shared/theme/constants/app_colors.dart';
 import 'package:cashflow/shared/theme/constants/app_paddings.dart';
@@ -14,6 +17,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final AuthController _authController = Modular.get<AuthController>();
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -135,11 +139,13 @@ class _LoginPageState extends State<LoginPage> {
                                             borderRadius: AppBorderRadius.large,
                                           ),
                                         ),
-                                        onPressed: () {
+                                        onPressed: () async {
                                           if (_formKey.currentState!
                                               .validate()) {
-                                            Modular.to.pushReplacementNamed(
-                                              '/home/',
+                                            await makeLogin(
+                                              _emailController.text,
+                                              _passwordController.text,
+                                              context,
                                             );
                                           }
                                         },
@@ -187,5 +193,27 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+
+  Future<void> makeLogin(
+    String email,
+    String password,
+    BuildContext context,
+  ) async {
+    try {
+      await _authController.makeLogin(email, password);
+      if (_authController.isLoggedIn) {
+        Modular.to.pushReplacementNamed('/home/');
+      }
+    } on CustomException catch (customException) {
+      await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialogCustomExceptionComponent(
+            customException: customException,
+          );
+        },
+      );
+    }
   }
 }
