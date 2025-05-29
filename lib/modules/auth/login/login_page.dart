@@ -142,7 +142,7 @@ class _LoginPageState extends State<LoginPage> {
                                         onPressed: () async {
                                           if (_formKey.currentState!
                                               .validate()) {
-                                            await makeLogin(
+                                            await login(
                                               _emailController.text,
                                               _passwordController.text,
                                               context,
@@ -195,13 +195,13 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Future<void> makeLogin(
+  Future<void> login(
     String email,
     String password,
     BuildContext context,
   ) async {
     try {
-      await _authController.makeLogin(email, password);
+      await _authController.login(email, password);
       if (_authController.isLoggedIn) {
         Modular.to.pushReplacementNamed('/home/');
       }

@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:cashflow/modules/auth/auth_repository.dart';
 import 'package:cashflow/modules/auth/models/user_model.dart';
-import 'package:hive/hive.dart';
+import 'package:cashflow/shared/exceptions/custom_exception.dart';
 import 'package:mobx/mobx.dart';
 part 'auth_controller.g.dart';
 
@@ -43,15 +43,15 @@ abstract class _AuthControllerBase with Store {
   }
 
   @action
-  Future<void> makeLogin(String email, String password) async {
+  Future<void> login(String email, String password) async {
     try {
       loading = true;
-      var result = json.decode(await authRepository.makeLogin(email, password));
-      await setUser(
+      var result = json.decode(await authRepository.login(email, password));
+      UserModel user = await getUserByEmail(
         email: email,
         token: result["token"],
-        targetId: result["targetId"],
       );
+      setUser(value: user);
       loading = false;
     } catch (e) {
       loading = false;
@@ -60,12 +60,40 @@ abstract class _AuthControllerBase with Store {
   }
 
   @action
-  Future<void> setUser({
+  Future<void> logout() async {
+    loading = true;
+    setUser(value: UserModel.cleanData());
+    loading = false;
+  }
+
+  @action
+  Future<UserModel> getUserByEmail({
     required String email,
     required String token,
-    required targetId,
   }) async {
-    user.email = email;
-    user.token = token;
+    dynamic result = await authRepository.getUserByEmail(email);
+    UserModel user = UserModel.setData(
+      json.decode(result)["value"],
+      tokenValue: token,
+    );
+    return user;
+  }
+
+  @action
+  void setUser({required UserModel value}) {
+    user = value;
+  }
+
+  @action
+  Future<String> deleteUser() async {
+    try {
+      loading = true;
+      String result = await authRepository.deleteUser(user);
+      loading = false;
+      return result;
+    } catch (e) {
+      loading = false;
+      rethrow;
+    }
   }
 }

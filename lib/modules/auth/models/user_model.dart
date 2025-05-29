@@ -1,8 +1,8 @@
 class UserModel {
-  String name;
-  String email;
-  String password;
-  String token;
+  late String name;
+  late String email;
+  late String password;
+  late String token;
   UserModel({
     required this.name,
     required this.email,
@@ -10,11 +10,19 @@ class UserModel {
     required this.token,
   });
 
-  UserModel.fromJson(Map<String, dynamic> json)
-    : name = json['name'] ?? "",
-      email = json['email'] ?? "",
-      password = json['password'] ?? "",
-      token = json['token'] ?? "";
+  UserModel.setData(Map<String, dynamic> json, {required String tokenValue}) {
+    name = json['name'] ?? "";
+    email = json['email'] ?? "";
+    password = json['password'] ?? "";
+    token = tokenValue;
+  }
+
+  UserModel.cleanData() {
+    name = "";
+    email = "";
+    password = "";
+    token = "";
+  }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};

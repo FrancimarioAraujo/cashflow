@@ -1,8 +1,11 @@
+import 'package:cashflow/modules/auth/auth_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 
 class DashboardPage extends StatelessWidget {
-  const DashboardPage({super.key});
+  DashboardPage({super.key});
 
+  final AuthController _authController = Modular.get<AuthController>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -12,8 +15,8 @@ class DashboardPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              "Olá, João",
+            Text(
+              "Olá, ${_authController.user.name}",
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,

@@ -9,6 +9,14 @@ part of 'auth_controller.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$AuthController on _AuthControllerBase, Store {
+  Computed<bool>? _$isLoggedInComputed;
+
+  @override
+  bool get isLoggedIn =>
+      (_$isLoggedInComputed ??= Computed<bool>(() => super.isLoggedIn,
+              name: '_AuthControllerBase.isLoggedIn'))
+          .value;
+
   late final _$userAtom =
       Atom(name: '_AuthControllerBase.user', context: context);
 
@@ -57,19 +65,60 @@ mixin _$AuthController on _AuthControllerBase, Store {
         confirmPassword: confirmPassword));
   }
 
-  late final _$makeLoginAsyncAction =
-      AsyncAction('_AuthControllerBase.makeLogin', context: context);
+  late final _$loginAsyncAction =
+      AsyncAction('_AuthControllerBase.login', context: context);
 
   @override
-  Future<void> makeLogin(String email, String password) {
-    return _$makeLoginAsyncAction.run(() => super.makeLogin(email, password));
+  Future<void> login(String email, String password) {
+    return _$loginAsyncAction.run(() => super.login(email, password));
+  }
+
+  late final _$logoutAsyncAction =
+      AsyncAction('_AuthControllerBase.logout', context: context);
+
+  @override
+  Future<void> logout() {
+    return _$logoutAsyncAction.run(() => super.logout());
+  }
+
+  late final _$getUserByEmailAsyncAction =
+      AsyncAction('_AuthControllerBase.getUserByEmail', context: context);
+
+  @override
+  Future<UserModel> getUserByEmail(
+      {required String email, required String token}) {
+    return _$getUserByEmailAsyncAction
+        .run(() => super.getUserByEmail(email: email, token: token));
+  }
+
+  late final _$deleteUserAsyncAction =
+      AsyncAction('_AuthControllerBase.deleteUser', context: context);
+
+  @override
+  Future<String> deleteUser() {
+    return _$deleteUserAsyncAction.run(() => super.deleteUser());
+  }
+
+  late final _$_AuthControllerBaseActionController =
+      ActionController(name: '_AuthControllerBase', context: context);
+
+  @override
+  void setUser({required UserModel value}) {
+    final _$actionInfo = _$_AuthControllerBaseActionController.startAction(
+        name: '_AuthControllerBase.setUser');
+    try {
+      return super.setUser(value: value);
+    } finally {
+      _$_AuthControllerBaseActionController.endAction(_$actionInfo);
+    }
   }
 
   @override
   String toString() {
     return '''
 user: ${user},
-loading: ${loading}
+loading: ${loading},
+isLoggedIn: ${isLoggedIn}
     ''';
   }
 }
