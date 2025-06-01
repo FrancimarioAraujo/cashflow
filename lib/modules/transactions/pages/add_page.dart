@@ -1,8 +1,14 @@
-import 'package:cashflow/modules/incomes/controllers/income_controller.dart';
+import 'package:cashflow/modules/transactions/controllers/transaction_controller.dart';
+import 'package:cashflow/shared/components/alert_dialog_custom_exception_component.dart';
+import 'package:cashflow/shared/components/alert_dialog_info_component.dart';
+import 'package:cashflow/shared/exceptions/custom_exception.dart';
+import 'package:cashflow/shared/models/action_model.dart';
 import 'package:cashflow/shared/theme/constants/app_colors.dart';
+import 'package:cashflow/shared/util/strings_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter/services.dart';
 
 class AddPage extends StatefulWidget {
   const AddPage({super.key});
@@ -13,17 +19,20 @@ class AddPage extends StatefulWidget {
 
 class _AddPageState extends State<AddPage> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _valorController = TextEditingController();
-  final TextEditingController _descricaoController = TextEditingController();
-  final TextEditingController _dateController = TextEditingController();
-  final IncomeController _incomeController = Modular.get<IncomeController>();
-  String? _selectedCategory;
+  final TextEditingController _valueTextFieldController =
+      TextEditingController();
+  final TextEditingController _descriptionTextFieldController =
+      TextEditingController();
+  final TransactionController _transactionController =
+      Modular.get<TransactionController>();
+
+  StringsUtil stringsUtil = StringsUtil();
 
   @override
   void dispose() {
-    _valorController.dispose();
-    _descricaoController.dispose();
-    _dateController.dispose();
+    _valueTextFieldController.dispose();
+    _descriptionTextFieldController.dispose();
+
     super.dispose();
   }
 
@@ -62,10 +71,13 @@ class _AddPageState extends State<AddPage> {
                   ),
                   const SizedBox(height: 8),
                   TextFormField(
-                    controller: _valorController,
+                    controller: _valueTextFieldController,
                     keyboardType: const TextInputType.numberWithOptions(
                       decimal: true,
                     ),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[\d,\.]')),
+                    ],
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 36,
@@ -96,20 +108,22 @@ class _AddPageState extends State<AddPage> {
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                           selected:
-                              _incomeController.transactionTypeSelected ==
+                              _transactionController.transactionTypeSelected ==
                               TransactionType.income,
                           selectedColor: Colors.green,
                           backgroundColor: AppColors.darkGrey,
                           labelStyle: TextStyle(
                             color:
-                                _incomeController.transactionTypeSelected ==
+                                _transactionController
+                                            .transactionTypeSelected ==
                                         TransactionType.income
                                     ? Colors.white
                                     : Colors.white70,
                           ),
                           onSelected: (selected) {
-                            _incomeController.transactionTypeSelected =
-                                TransactionType.income;
+                            _transactionController.selectTransactionType(
+                              TransactionType.income,
+                            );
                           },
                         ),
                       ),
@@ -121,20 +135,22 @@ class _AddPageState extends State<AddPage> {
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                           selected:
-                              _incomeController.transactionTypeSelected ==
+                              _transactionController.transactionTypeSelected ==
                               TransactionType.expense,
                           selectedColor: Colors.red,
                           backgroundColor: AppColors.darkGrey,
                           labelStyle: TextStyle(
                             color:
-                                _incomeController.transactionTypeSelected ==
+                                _transactionController
+                                            .transactionTypeSelected ==
                                         TransactionType.expense
                                     ? Colors.white
                                     : Colors.white70,
                           ),
                           onSelected: (selected) {
-                            _incomeController.transactionTypeSelected =
-                                TransactionType.expense;
+                            _transactionController.selectTransactionType(
+                              TransactionType.expense,
+                            );
                           },
                         ),
                       ),
@@ -143,7 +159,7 @@ class _AddPageState extends State<AddPage> {
                   const SizedBox(height: 24),
                   // Campo Descrição
                   TextFormField(
-                    controller: _descricaoController,
+                    controller: _descriptionTextFieldController,
                     style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
                       labelText: "Descrição",
@@ -175,8 +191,9 @@ class _AddPageState extends State<AddPage> {
                   Wrap(
                     spacing: 8,
                     children:
-                        _incomeController.getCategories().map((category) {
-                          final bool isSelected = _selectedCategory == category;
+                        _transactionController.getCategories().map((category) {
+                          final bool isSelected = _transactionController
+                              .isSelectedCategory(category);
                           return ChoiceChip(
                             label: Text(
                               category,
@@ -188,15 +205,14 @@ class _AddPageState extends State<AddPage> {
                             ),
                             selected: isSelected,
                             selectedColor:
-                                _incomeController.transactionTypeSelected ==
+                                _transactionController
+                                            .transactionTypeSelected ==
                                         TransactionType.income
                                     ? Colors.green
                                     : Colors.red,
                             backgroundColor: AppColors.darkGrey,
                             onSelected: (selected) {
-                              setState(() {
-                                _selectedCategory = category;
-                              });
+                              _transactionController.selectCategory(category);
                             },
                           );
                         }).toList(),
@@ -215,18 +231,12 @@ class _AddPageState extends State<AddPage> {
                           borderRadius: BorderRadius.circular(16),
                         ),
                       ),
-                      onPressed: () {
-                        if (_formKey.currentState!.validate() &&
-                            _selectedCategory != null) {
-                          // Realize a conversão e o salvamento dos dados.
-                          // Exemplo: converter o valor e armazenar os dados coletados.
-                        } else if (_selectedCategory == null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("Selecione uma categoria"),
-                            ),
-                          );
-                        }
+                      onPressed: () async {
+                        await addTransaction(
+                          valueParam: _valueTextFieldController.text,
+                          descriptionParam:
+                              _descriptionTextFieldController.text,
+                        );
                       },
                       child: const Text(
                         "Salvar",
@@ -244,5 +254,62 @@ class _AddPageState extends State<AddPage> {
         },
       ),
     );
+  }
+
+  Future<void> addTransaction({
+    required String valueParam,
+    required String descriptionParam,
+  }) async {
+    try {
+      double value = stringsUtil.textToDouble(valueParam);
+      if (_formKey.currentState!.validate() &&
+          _transactionController.selectedCategory != null) {
+        await _transactionController
+            .addTransaction(
+              value: value,
+              description: descriptionParam,
+              category: _transactionController.selectedCategory!,
+            )
+            .then((value) async {
+              await showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialogInfoComponent(
+                    title: "Transação adicionada",
+                    description: "Sua transação foi adicionada com sucesso.",
+                    actions: [
+                      ActionModel(title: "Consultar transações", onTap: () {}),
+                    ],
+                    alertDialogType: AlertDialogType.info,
+                  );
+                },
+              );
+            });
+      } else if (_transactionController.selectedCategory == null) {
+        throw CustomException(
+          title: "Campo vazio",
+          message: "Selecione uma categoria",
+        );
+      }
+    } on CustomException catch (e) {
+      await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialogCustomExceptionComponent(customException: e);
+        },
+      );
+    } catch (e) {
+      await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialogCustomExceptionComponent(
+            customException: CustomException(
+              title: "Erro",
+              message: "Ocorreu um erro ao adicionar a transação.",
+            ),
+          );
+        },
+      );
+    }
   }
 }

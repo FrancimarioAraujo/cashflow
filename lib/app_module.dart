@@ -1,8 +1,8 @@
 import 'package:cashflow/modules/auth/auth_controller.dart';
 import 'package:cashflow/modules/auth/auth_repository.dart';
-import 'package:cashflow/modules/incomes/controllers/income_controller.dart';
-import 'package:cashflow/modules/incomes/income_module.dart';
-import 'package:cashflow/modules/incomes/repositories/income_repository.dart';
+import 'package:cashflow/modules/transactions/controllers/transaction_controller.dart';
+import 'package:cashflow/modules/transactions/transaction_module.dart';
+import 'package:cashflow/modules/transactions/repositories/income_repository.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:cashflow/modules/home/home_module.dart';
 import 'package:cashflow/modules/splash/splash_module.dart';
@@ -12,9 +12,9 @@ class AppModule extends Module {
   @override
   void binds(i) {
     i.addSingleton(AuthRepository.new);
-    i.addSingleton(IncomeRepository.new);
     i.addSingleton(AuthController.new);
-    i.addSingleton(IncomeController.new);
+    i.addSingleton(TransactionRepository.new);
+    i.addSingleton(TransactionController.new);
   }
 
   @override
@@ -22,6 +22,6 @@ class AppModule extends Module {
     r.module('/', module: SplashModule());
     r.module('/auth', module: AuthModule());
     r.module('/home', module: HomeModule());
-    r.module('/income', module: IncomeModule());
+    r.module('/transaction', module: TransactionModule());
   }
 }

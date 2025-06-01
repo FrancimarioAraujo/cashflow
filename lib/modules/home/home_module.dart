@@ -1,4 +1,4 @@
-import 'package:cashflow/modules/incomes/pages/add_page.dart';
+import 'package:cashflow/modules/transactions/pages/add_page.dart';
 import 'package:cashflow/modules/home/dashboard_page.dart';
 import 'package:cashflow/modules/home/profile_page.dart';
 import 'package:cashflow/modules/home/reports_page.dart';
