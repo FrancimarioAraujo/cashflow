@@ -2,7 +2,7 @@ import 'package:cashflow/modules/auth/auth_controller.dart';
 import 'package:cashflow/modules/auth/auth_repository.dart';
 import 'package:cashflow/modules/transactions/controllers/transaction_controller.dart';
 import 'package:cashflow/modules/transactions/transaction_module.dart';
-import 'package:cashflow/modules/transactions/repositories/income_repository.dart';
+import 'package:cashflow/modules/transactions/repositories/transaction_repository.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:cashflow/modules/home/home_module.dart';
 import 'package:cashflow/modules/splash/splash_module.dart';

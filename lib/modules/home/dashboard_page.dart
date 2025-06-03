@@ -1,4 +1,5 @@
 import 'package:cashflow/modules/auth/auth_controller.dart';
+import 'package:cashflow/modules/transactions/components/modal_bottom_transactions_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
@@ -155,69 +156,78 @@ class DashboardPage extends StatelessWidget {
             ),
             const SizedBox(height: 32),
 
-            // Transações recentes
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.transparent,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.white24, width: 2),
-              ),
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Transações recentes",
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+            InkWell(
+              onTap: () async {
+                await showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  builder: (_) => const ModalBottomTransactionsComponents(),
+                );
+              },
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: Colors.white24, width: 2),
+                ),
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Transações recentes",
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  const Text(
-                    "Suas últimas movimentações financeiras",
-                    style: TextStyle(fontSize: 13, color: Colors.white54),
-                  ),
-                  const SizedBox(height: 16),
-                  // Lista de transações
-                  _buildTransaction(
-                    icon: Icons.arrow_upward,
-                    iconColor: Colors.green,
-                    title: "Salário",
-                    date: "15 abr",
-                    value: "+R\$ 4.250,00",
-                    valueColor: Colors.green,
-                  ),
-                  _divider(),
-                  _buildTransaction(
-                    icon: Icons.arrow_downward,
-                    iconColor: Colors.red,
-                    title: "Supermercado",
-                    date: "10 abr",
-                    value: "-R\$ 1.201,36",
-                    valueColor: Colors.red,
-                  ),
-                  _divider(),
-                  _buildTransaction(
-                    icon: Icons.arrow_upward,
-                    iconColor: Colors.green,
-                    title: "Freelance",
-                    date: "05 abr",
-                    value: "+R\$ 1.000,00",
-                    valueColor: Colors.green,
-                  ),
-                  _divider(),
-                  _buildTransaction(
-                    icon: Icons.arrow_downward,
-                    iconColor: Colors.red,
-                    title: "Aluguel",
-                    date: "",
-                    value: "-R\$ 1.000,00",
-                    valueColor: Colors.red,
-                  ),
-                ],
+                    const SizedBox(height: 4),
+                    const Text(
+                      "Suas últimas movimentações financeiras",
+                      style: TextStyle(fontSize: 13, color: Colors.white54),
+                    ),
+                    const SizedBox(height: 16),
+                    // Lista de transações
+                    _buildTransaction(
+                      icon: Icons.arrow_upward,
+                      iconColor: Colors.green,
+                      title: "Salário",
+                      date: "15 abr",
+                      value: "+R\$ 4.250,00",
+                      valueColor: Colors.green,
+                    ),
+                    _divider(),
+                    _buildTransaction(
+                      icon: Icons.arrow_downward,
+                      iconColor: Colors.red,
+                      title: "Supermercado",
+                      date: "10 abr",
+                      value: "-R\$ 1.201,36",
+                      valueColor: Colors.red,
+                    ),
+                    _divider(),
+                    _buildTransaction(
+                      icon: Icons.arrow_upward,
+                      iconColor: Colors.green,
+                      title: "Freelance",
+                      date: "05 abr",
+                      value: "+R\$ 1.000,00",
+                      valueColor: Colors.green,
+                    ),
+                    _divider(),
+                    _buildTransaction(
+                      icon: Icons.arrow_downward,
+                      iconColor: Colors.red,
+                      title: "Aluguel",
+                      date: "",
+                      value: "-R\$ 1.000,00",
+                      valueColor: Colors.red,
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

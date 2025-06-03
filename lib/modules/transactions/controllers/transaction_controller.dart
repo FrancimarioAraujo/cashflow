@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:cashflow/modules/auth/auth_controller.dart';
-import 'package:cashflow/modules/transactions/repositories/income_repository.dart';
+import 'package:cashflow/modules/transactions/models/income_model.dart';
+import 'package:cashflow/modules/transactions/repositories/transaction_repository.dart';
 import 'package:mobx/mobx.dart';
 part 'transaction_controller.g.dart';
 
@@ -18,6 +21,16 @@ abstract class _TransactionControllerBase with Store {
 
   @observable
   String? selectedCategory;
+  @observable
+  ObservableList<TransactionModel> incomes = ObservableList<TransactionModel>();
+
+  @observable
+  ObservableList<TransactionModel> expenses =
+      ObservableList<TransactionModel>();
+
+  @observable
+  ObservableList<TransactionModel> transactions =
+      ObservableList<TransactionModel>();
 
   bool isSelectedCategory(String? category) {
     return selectedCategory == category;
@@ -55,6 +68,46 @@ abstract class _TransactionControllerBase with Store {
     return transactionTypeSelected == TransactionType.income
         ? categoriesIncome
         : categoriesExpense;
+  }
+
+  Future<void> fetchTransactions() async {
+    transactions.clear();
+    await fetchIncomes();
+    await fetchExpenses();
+    transactions.addAll(incomes);
+    transactions.addAll(expenses);
+  }
+
+  @action
+  Future<void> fetchIncomes() async {
+    incomes.clear();
+    dynamic result = await incomeRepository.getIncomes(
+      user: authController.user,
+    );
+    List resultDecoded = json.decode(result);
+    for (int i = 0; i < resultDecoded.length; i++) {
+      TransactionModel transaction = TransactionModel.fromJson(
+        resultDecoded[i]["value"],
+        transactionTypeParam: TransactionType.income,
+      );
+      incomes.add(transaction);
+    }
+  }
+
+  @action
+  Future<void> fetchExpenses() async {
+    expenses.clear();
+    dynamic result = await incomeRepository.getExpenses(
+      user: authController.user,
+    );
+    List resultDecoded = json.decode(result);
+    for (int i = 0; i < resultDecoded.length; i++) {
+      TransactionModel transaction = TransactionModel.fromJson(
+        resultDecoded[i]["value"],
+        transactionTypeParam: TransactionType.expense,
+      );
+      expenses.add(transaction);
+    }
   }
 
   @action

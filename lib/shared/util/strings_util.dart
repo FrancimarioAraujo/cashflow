@@ -4,8 +4,8 @@ class StringsUtil {
   double textToDouble(String? value) {
     if (!isValidNumber(value)) {
       throw CustomException(
-        title: "Número inválido",
-        message: "Por favor, insira um número válido.",
+        title: "Valor Inválido",
+        message: "Por favor, insira um valor válido.",
       );
     }
     String normalizedValue = value!.replaceAll(',', '.');

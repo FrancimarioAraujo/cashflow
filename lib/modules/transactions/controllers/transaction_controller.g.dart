@@ -43,6 +43,54 @@ mixin _$TransactionController on _TransactionControllerBase, Store {
     });
   }
 
+  late final _$incomesAtom =
+      Atom(name: '_TransactionControllerBase.incomes', context: context);
+
+  @override
+  ObservableList<TransactionModel> get incomes {
+    _$incomesAtom.reportRead();
+    return super.incomes;
+  }
+
+  @override
+  set incomes(ObservableList<TransactionModel> value) {
+    _$incomesAtom.reportWrite(value, super.incomes, () {
+      super.incomes = value;
+    });
+  }
+
+  late final _$expensesAtom =
+      Atom(name: '_TransactionControllerBase.expenses', context: context);
+
+  @override
+  ObservableList<TransactionModel> get expenses {
+    _$expensesAtom.reportRead();
+    return super.expenses;
+  }
+
+  @override
+  set expenses(ObservableList<TransactionModel> value) {
+    _$expensesAtom.reportWrite(value, super.expenses, () {
+      super.expenses = value;
+    });
+  }
+
+  late final _$transactionsAtom =
+      Atom(name: '_TransactionControllerBase.transactions', context: context);
+
+  @override
+  ObservableList<TransactionModel> get transactions {
+    _$transactionsAtom.reportRead();
+    return super.transactions;
+  }
+
+  @override
+  set transactions(ObservableList<TransactionModel> value) {
+    _$transactionsAtom.reportWrite(value, super.transactions, () {
+      super.transactions = value;
+    });
+  }
+
   late final _$categoriesIncomeAtom = Atom(
       name: '_TransactionControllerBase.categoriesIncome', context: context);
 
@@ -73,6 +121,22 @@ mixin _$TransactionController on _TransactionControllerBase, Store {
     _$categoriesExpenseAtom.reportWrite(value, super.categoriesExpense, () {
       super.categoriesExpense = value;
     });
+  }
+
+  late final _$fetchIncomesAsyncAction =
+      AsyncAction('_TransactionControllerBase.fetchIncomes', context: context);
+
+  @override
+  Future<void> fetchIncomes() {
+    return _$fetchIncomesAsyncAction.run(() => super.fetchIncomes());
+  }
+
+  late final _$fetchExpensesAsyncAction =
+      AsyncAction('_TransactionControllerBase.fetchExpenses', context: context);
+
+  @override
+  Future<void> fetchExpenses() {
+    return _$fetchExpensesAsyncAction.run(() => super.fetchExpenses());
   }
 
   late final _$addTransactionAsyncAction = AsyncAction(
@@ -118,6 +182,9 @@ mixin _$TransactionController on _TransactionControllerBase, Store {
     return '''
 transactionTypeSelected: ${transactionTypeSelected},
 selectedCategory: ${selectedCategory},
+incomes: ${incomes},
+expenses: ${expenses},
+transactions: ${transactions},
 categoriesIncome: ${categoriesIncome},
 categoriesExpense: ${categoriesExpense}
     ''';
