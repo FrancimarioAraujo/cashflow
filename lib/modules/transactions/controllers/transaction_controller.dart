@@ -21,6 +21,9 @@ abstract class _TransactionControllerBase with Store {
 
   @observable
   String? selectedCategory;
+
+  @observable
+  bool isLoading = false;
   @observable
   ObservableList<TransactionModel> incomes = ObservableList<TransactionModel>();
 
@@ -64,18 +67,39 @@ abstract class _TransactionControllerBase with Store {
     "outros",
   ];
 
+  @computed
+  double get totalIncome {
+    return incomes.fold(0.0, (prev, element) => prev + element.valor);
+  }
+
+  @computed
+  double get totalExpense {
+    return expenses.fold(0.0, (prev, element) => prev + element.valor);
+  }
+
+  @computed
+  double get totalBalance {
+    return totalIncome - totalExpense;
+  }
+
   List<String> getCategories() {
     return transactionTypeSelected == TransactionType.income
         ? categoriesIncome
         : categoriesExpense;
   }
 
+  @action
   Future<void> fetchTransactions() async {
-    transactions.clear();
+    isLoading = true;
+    transactions = ObservableList<TransactionModel>();
     await fetchIncomes();
     await fetchExpenses();
-    transactions.addAll(incomes);
-    transactions.addAll(expenses);
+    transactions = ObservableList<TransactionModel>.of([
+      ...incomes,
+      ...expenses,
+    ]);
+    transactions.sort((a, b) => b.date.compareTo(a.date));
+    isLoading = false;
   }
 
   @action

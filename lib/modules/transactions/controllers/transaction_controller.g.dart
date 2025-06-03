@@ -9,6 +9,28 @@ part of 'transaction_controller.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$TransactionController on _TransactionControllerBase, Store {
+  Computed<double>? _$totalIncomeComputed;
+
+  @override
+  double get totalIncome =>
+      (_$totalIncomeComputed ??= Computed<double>(() => super.totalIncome,
+              name: '_TransactionControllerBase.totalIncome'))
+          .value;
+  Computed<double>? _$totalExpenseComputed;
+
+  @override
+  double get totalExpense =>
+      (_$totalExpenseComputed ??= Computed<double>(() => super.totalExpense,
+              name: '_TransactionControllerBase.totalExpense'))
+          .value;
+  Computed<double>? _$totalBalanceComputed;
+
+  @override
+  double get totalBalance =>
+      (_$totalBalanceComputed ??= Computed<double>(() => super.totalBalance,
+              name: '_TransactionControllerBase.totalBalance'))
+          .value;
+
   late final _$transactionTypeSelectedAtom = Atom(
       name: '_TransactionControllerBase.transactionTypeSelected',
       context: context);
@@ -40,6 +62,22 @@ mixin _$TransactionController on _TransactionControllerBase, Store {
   set selectedCategory(String? value) {
     _$selectedCategoryAtom.reportWrite(value, super.selectedCategory, () {
       super.selectedCategory = value;
+    });
+  }
+
+  late final _$isLoadingAtom =
+      Atom(name: '_TransactionControllerBase.isLoading', context: context);
+
+  @override
+  bool get isLoading {
+    _$isLoadingAtom.reportRead();
+    return super.isLoading;
+  }
+
+  @override
+  set isLoading(bool value) {
+    _$isLoadingAtom.reportWrite(value, super.isLoading, () {
+      super.isLoading = value;
     });
   }
 
@@ -123,6 +161,15 @@ mixin _$TransactionController on _TransactionControllerBase, Store {
     });
   }
 
+  late final _$fetchTransactionsAsyncAction = AsyncAction(
+      '_TransactionControllerBase.fetchTransactions',
+      context: context);
+
+  @override
+  Future<void> fetchTransactions() {
+    return _$fetchTransactionsAsyncAction.run(() => super.fetchTransactions());
+  }
+
   late final _$fetchIncomesAsyncAction =
       AsyncAction('_TransactionControllerBase.fetchIncomes', context: context);
 
@@ -182,11 +229,15 @@ mixin _$TransactionController on _TransactionControllerBase, Store {
     return '''
 transactionTypeSelected: ${transactionTypeSelected},
 selectedCategory: ${selectedCategory},
+isLoading: ${isLoading},
 incomes: ${incomes},
 expenses: ${expenses},
 transactions: ${transactions},
 categoriesIncome: ${categoriesIncome},
-categoriesExpense: ${categoriesExpense}
+categoriesExpense: ${categoriesExpense},
+totalIncome: ${totalIncome},
+totalExpense: ${totalExpense},
+totalBalance: ${totalBalance}
     ''';
   }
 }

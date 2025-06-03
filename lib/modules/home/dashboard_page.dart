@@ -1,12 +1,17 @@
 import 'package:cashflow/modules/auth/auth_controller.dart';
 import 'package:cashflow/modules/transactions/components/modal_bottom_transactions_components.dart';
+import 'package:cashflow/modules/transactions/components/transaction_component.dart';
+import 'package:cashflow/modules/transactions/controllers/transaction_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:intl/intl.dart';
 
 class DashboardPage extends StatelessWidget {
   DashboardPage({super.key});
 
   final AuthController _authController = Modular.get<AuthController>();
+  final TransactionController _transactionController =
+      Modular.get<TransactionController>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,8 +46,8 @@ class DashboardPage extends StatelessWidget {
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text(
+                children: [
+                  const Text(
                     "Saldo Total",
                     style: TextStyle(
                       fontSize: 18,
@@ -50,10 +55,13 @@ class DashboardPage extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
-                    r"$ 3.389,33",
-                    style: TextStyle(
+                    NumberFormat.currency(
+                      locale: 'pt_BR',
+                      symbol: 'R\$',
+                    ).format(_transactionController.totalBalance),
+                    style: const TextStyle(
                       fontSize: 36,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
@@ -78,9 +86,9 @@ class DashboardPage extends StatelessWidget {
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children: [
                         Row(
-                          children: [
+                          children: const [
                             Text(
                               "Receitas",
                               style: TextStyle(
@@ -96,10 +104,13 @@ class DashboardPage extends StatelessWidget {
                             ),
                           ],
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         Text(
-                          "R\$ 8.250,00",
-                          style: TextStyle(
+                          NumberFormat.currency(
+                            locale: 'pt_BR',
+                            symbol: 'R\$',
+                          ).format(_transactionController.totalIncome),
+                          style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
@@ -121,7 +132,7 @@ class DashboardPage extends StatelessWidget {
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children: [
                         Row(
                           children: [
                             Text(
@@ -141,7 +152,10 @@ class DashboardPage extends StatelessWidget {
                         ),
                         SizedBox(height: 8),
                         Text(
-                          "R\$ 4.860,67",
+                          NumberFormat.currency(
+                            locale: 'pt_BR',
+                            symbol: 'R\$',
+                          ).format(_transactionController.totalExpense),
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -189,42 +203,23 @@ class DashboardPage extends StatelessWidget {
                       "Suas últimas movimentações financeiras",
                       style: TextStyle(fontSize: 13, color: Colors.white54),
                     ),
-                    const SizedBox(height: 16),
-                    // Lista de transações
-                    _buildTransaction(
-                      icon: Icons.arrow_upward,
-                      iconColor: Colors.green,
-                      title: "Salário",
-                      date: "15 abr",
-                      value: "+R\$ 4.250,00",
-                      valueColor: Colors.green,
-                    ),
-                    _divider(),
-                    _buildTransaction(
-                      icon: Icons.arrow_downward,
-                      iconColor: Colors.red,
-                      title: "Supermercado",
-                      date: "10 abr",
-                      value: "-R\$ 1.201,36",
-                      valueColor: Colors.red,
-                    ),
-                    _divider(),
-                    _buildTransaction(
-                      icon: Icons.arrow_upward,
-                      iconColor: Colors.green,
-                      title: "Freelance",
-                      date: "05 abr",
-                      value: "+R\$ 1.000,00",
-                      valueColor: Colors.green,
-                    ),
-                    _divider(),
-                    _buildTransaction(
-                      icon: Icons.arrow_downward,
-                      iconColor: Colors.red,
-                      title: "Aluguel",
-                      date: "",
-                      value: "-R\$ 1.000,00",
-                      valueColor: Colors.red,
+
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: 5,
+                      itemBuilder: (context, index) {
+                        return Column(
+                          children: [
+                            TransactionComponent(
+                              transaction:
+                                  _transactionController.transactions[index],
+                            ),
+                            if (index < 4)
+                              _divider(), // Add divider between items except the last one
+                          ],
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -238,48 +233,4 @@ class DashboardPage extends StatelessWidget {
 
   Widget _divider() =>
       const Divider(color: Colors.white24, thickness: 1, height: 16);
-
-  Widget _buildTransaction({
-    required IconData icon,
-    required Color iconColor,
-    required String title,
-    required String date,
-    required String value,
-    required Color valueColor,
-  }) {
-    return Row(
-      children: [
-        Icon(icon, color: iconColor, size: 22),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              if (date.isNotEmpty)
-                Text(
-                  date,
-                  style: const TextStyle(color: Colors.white54, fontSize: 13),
-                ),
-            ],
-          ),
-        ),
-        Text(
-          value,
-          style: TextStyle(
-            color: valueColor,
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ],
-    );
-  }
 }
