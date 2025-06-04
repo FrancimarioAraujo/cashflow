@@ -1,6 +1,7 @@
 import 'package:cashflow/modules/transactions/controllers/transaction_controller.dart';
 
 class TransactionModel {
+  final String key;
   final String userId;
   final double valor;
   final String category;
@@ -9,6 +10,7 @@ class TransactionModel {
   final String transactionType;
 
   TransactionModel({
+    required this.key,
     required this.userId,
     required this.valor,
     required this.category,
@@ -20,8 +22,10 @@ class TransactionModel {
   factory TransactionModel.fromJson(
     Map<String, dynamic> json, {
     required TransactionType transactionTypeParam,
+    required String key,
   }) {
     return TransactionModel(
+      key: key,
       userId: json['userId'] as String,
       valor: (json['valor'] as num).toDouble(),
       category: json['category'] as String,

@@ -278,7 +278,13 @@ class _AddPageState extends State<AddPage> {
                     title: "Transação adicionada",
                     description: "Sua transação foi adicionada com sucesso.",
                     actions: [
-                      ActionModel(title: "Consultar transações", onTap: () {}),
+                      ActionModel(
+                        title: "Consultar transações",
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          Modular.to.navigate("/home/dashboard");
+                        },
+                      ),
                     ],
                     alertDialogType: AlertDialogType.info,
                   );

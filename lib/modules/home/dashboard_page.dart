@@ -224,7 +224,8 @@ class _DashboardPageState extends State<DashboardPage> {
                           ListView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
-                            itemCount: 5,
+                            itemCount:
+                                _transactionController.transactions.length,
                             itemBuilder: (context, index) {
                               return Column(
                                 children: [
@@ -233,8 +234,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                         _transactionController
                                             .transactions[index],
                                   ),
-                                  if (index < 4)
-                                    _divider(), // Add divider between items except the last one
+                                  if (index > 5) Container(),
                                 ],
                               );
                             },

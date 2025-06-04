@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:cashflow/modules/auth/models/user_model.dart';
+import 'package:cashflow/modules/transactions/models/transaction_model.dart';
 import 'package:cashflow/shared/constants/urls_util.dart';
 import 'package:cashflow/shared/exceptions/custom_exception.dart';
 import 'package:http/http.dart' as http;
@@ -91,6 +92,50 @@ class TransactionRepository {
           title: "Problema",
           message: "Deu um erro na requisição",
         );
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<String> deleteIncome({
+    required TransactionModel income,
+    required UserModel user,
+  }) async {
+    try {
+      var response = await http.delete(
+        Uri.parse("${UrlsUtil().getUrlApp()}/income/${income.key}"),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer ${user.token}",
+        },
+      );
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        throw CustomException(title: response.body, message: "");
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<String> deleteExpense({
+    required TransactionModel expense,
+    required UserModel user,
+  }) async {
+    try {
+      var response = await http.delete(
+        Uri.parse("${UrlsUtil().getUrlApp()}/expense/${expense.key}"),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer ${user.token}",
+        },
+      );
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        throw CustomException(title: response.body, message: "");
       }
     } catch (e) {
       rethrow;

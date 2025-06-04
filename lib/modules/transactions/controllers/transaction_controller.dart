@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:cashflow/modules/auth/auth_controller.dart';
-import 'package:cashflow/modules/transactions/models/income_model.dart';
+import 'package:cashflow/modules/transactions/models/transaction_model.dart';
 import 'package:cashflow/modules/transactions/repositories/transaction_repository.dart';
 import 'package:mobx/mobx.dart';
 part 'transaction_controller.g.dart';
@@ -10,10 +10,10 @@ class TransactionController = _TransactionControllerBase
     with _$TransactionController;
 
 abstract class _TransactionControllerBase with Store {
-  final TransactionRepository incomeRepository;
+  final TransactionRepository transactionRepository;
   final AuthController authController;
   _TransactionControllerBase({
-    required this.incomeRepository,
+    required this.transactionRepository,
     required this.authController,
   });
   @observable
@@ -105,12 +105,13 @@ abstract class _TransactionControllerBase with Store {
   @action
   Future<void> fetchIncomes() async {
     incomes.clear();
-    dynamic result = await incomeRepository.getIncomes(
+    dynamic result = await transactionRepository.getIncomes(
       user: authController.user,
     );
     List resultDecoded = json.decode(result);
     for (int i = 0; i < resultDecoded.length; i++) {
       TransactionModel transaction = TransactionModel.fromJson(
+        key: resultDecoded[i]["key"],
         resultDecoded[i]["value"],
         transactionTypeParam: TransactionType.income,
       );
@@ -121,12 +122,13 @@ abstract class _TransactionControllerBase with Store {
   @action
   Future<void> fetchExpenses() async {
     expenses.clear();
-    dynamic result = await incomeRepository.getExpenses(
+    dynamic result = await transactionRepository.getExpenses(
       user: authController.user,
     );
     List resultDecoded = json.decode(result);
     for (int i = 0; i < resultDecoded.length; i++) {
       TransactionModel transaction = TransactionModel.fromJson(
+        key: resultDecoded[i]["key"],
         resultDecoded[i]["value"],
         transactionTypeParam: TransactionType.expense,
       );
@@ -141,13 +143,35 @@ abstract class _TransactionControllerBase with Store {
     required String category,
   }) async {
     try {
-      await incomeRepository.addTransaction(
+      await transactionRepository.addTransaction(
         value: value,
         description: description,
         category: category,
         user: authController.user,
         transactionType: transactionTypeSelected.name,
       );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @action
+  Future<void> deleteTransaction({
+    required TransactionModel transaction,
+  }) async {
+    try {
+      if (transaction.transactionType == TransactionType.income.name) {
+        await transactionRepository.deleteIncome(
+          income: transaction,
+          user: authController.user,
+        );
+      } else {
+        await transactionRepository.deleteExpense(
+          expense: transaction,
+          user: authController.user,
+        );
+      }
+      await fetchTransactions();
     } catch (e) {
       rethrow;
     }
