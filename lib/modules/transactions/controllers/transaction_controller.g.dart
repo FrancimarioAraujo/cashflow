@@ -199,6 +199,25 @@ mixin _$TransactionController on _TransactionControllerBase, Store {
         value: value, description: description, category: category));
   }
 
+  late final _$updateTransactionAsyncAction = AsyncAction(
+      '_TransactionControllerBase.updateTransaction',
+      context: context);
+
+  @override
+  Future<void> updateTransaction(
+      {required double value,
+      required String description,
+      required String category,
+      required TransactionModel transaction,
+      required String transactionType}) {
+    return _$updateTransactionAsyncAction.run(() => super.updateTransaction(
+        value: value,
+        description: description,
+        category: category,
+        transaction: transaction,
+        transactionType: transactionType));
+  }
+
   late final _$deleteTransactionAsyncAction = AsyncAction(
       '_TransactionControllerBase.deleteTransaction',
       context: context);

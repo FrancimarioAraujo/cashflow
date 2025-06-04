@@ -98,13 +98,18 @@ class TransactionRepository {
     }
   }
 
-  Future<String> deleteIncome({
-    required TransactionModel income,
+  Future<String> deleteTransaction({
+    required TransactionModel transaction,
     required UserModel user,
+    required String transactionType,
   }) async {
     try {
+      String url =
+          transactionType == "income"
+              ? "${UrlsUtil().getUrlApp()}/income"
+              : "${UrlsUtil().getUrlApp()}/expense";
       var response = await http.delete(
-        Uri.parse("${UrlsUtil().getUrlApp()}/income/${income.key}"),
+        Uri.parse("$url/${transaction.key}"),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer ${user.token}",
@@ -120,17 +125,31 @@ class TransactionRepository {
     }
   }
 
-  Future<String> deleteExpense({
-    required TransactionModel expense,
+  Future<String> updateTransaction({
+    required double value,
+    required String description,
+    required String category,
+    required TransactionModel transaction,
     required UserModel user,
+    required String transactionType,
   }) async {
     try {
-      var response = await http.delete(
-        Uri.parse("${UrlsUtil().getUrlApp()}/expense/${expense.key}"),
+      String requestBody = json.encode({
+        "value": value,
+        "description": description,
+        "category": category,
+      });
+      String url =
+          transactionType == "income"
+              ? "${UrlsUtil().getUrlApp()}/income"
+              : "${UrlsUtil().getUrlApp()}/expense";
+      var response = await http.put(
+        Uri.parse("$url/${transaction.key}"),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer ${user.token}",
         },
+        body: requestBody,
       );
       if (response.statusCode == 200) {
         return response.body;

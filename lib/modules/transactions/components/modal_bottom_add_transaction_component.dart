@@ -1,4 +1,6 @@
+import 'package:cashflow/modules/auth/auth_controller.dart';
 import 'package:cashflow/modules/transactions/controllers/transaction_controller.dart';
+import 'package:cashflow/modules/transactions/models/transaction_model.dart';
 import 'package:cashflow/shared/components/alert_dialog_custom_exception_component.dart';
 import 'package:cashflow/shared/components/alert_dialog_info_component.dart';
 import 'package:cashflow/shared/exceptions/custom_exception.dart';
@@ -11,7 +13,13 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter/services.dart';
 
 class ModalBottomAddTransactionComponent extends StatefulWidget {
-  const ModalBottomAddTransactionComponent({super.key});
+  TransactionModel? transaction;
+  bool editing;
+  ModalBottomAddTransactionComponent({
+    super.key,
+    this.transaction,
+    this.editing = false,
+  });
 
   @override
   State<ModalBottomAddTransactionComponent> createState() =>
@@ -27,8 +35,29 @@ class _ModalBottomAddTransactionComponentState
       TextEditingController();
   final TransactionController _transactionController =
       Modular.get<TransactionController>();
+  final AuthController _authController = Modular.get<AuthController>();
 
   StringsUtil stringsUtil = StringsUtil();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if (widget.transaction != null) {
+      _valueTextFieldController.text =
+          widget.transaction?.valor != null
+              ? widget.transaction!.valor.toString()
+              : "";
+      _descriptionTextFieldController.text =
+          widget.transaction?.description ?? "";
+      _transactionController.selectTransactionType(
+        widget.transaction!.transactionType == TransactionType.income.name
+            ? TransactionType.income
+            : TransactionType.expense,
+      );
+      _transactionController.selectCategory(widget.transaction!.category);
+    }
+  }
 
   @override
   void dispose() {
@@ -223,11 +252,19 @@ class _ModalBottomAddTransactionComponentState
                         ),
                       ),
                       onPressed: () async {
-                        await addTransaction(
-                          valueParam: _valueTextFieldController.text,
-                          descriptionParam:
-                              _descriptionTextFieldController.text,
-                        );
+                        if (widget.editing) {
+                          await updateTransaction(
+                            valueParam: _valueTextFieldController.text,
+                            descriptionParam:
+                                _descriptionTextFieldController.text,
+                          );
+                        } else {
+                          await addTransaction(
+                            valueParam: _valueTextFieldController.text,
+                            descriptionParam:
+                                _descriptionTextFieldController.text,
+                          );
+                        }
                       },
                       child: const Text(
                         "Salvar",
@@ -304,6 +341,83 @@ class _ModalBottomAddTransactionComponentState
             customException: CustomException(
               title: "Erro",
               message: "Ocorreu um erro ao adicionar a transação.",
+            ),
+          );
+        },
+      );
+    }
+  }
+
+  Future<void> updateTransaction({
+    required String valueParam,
+    required String descriptionParam,
+  }) async {
+    try {
+      if (_formKey.currentState!.validate() &&
+          _transactionController.selectedCategory != null) {
+        double value = stringsUtil.textToDouble(_valueTextFieldController.text);
+        if (widget.transaction!.transactionType !=
+            _transactionController.transactionTypeSelected.name) {
+          _transactionController.deleteTransaction(
+            transaction: widget.transaction!,
+          );
+          _transactionController.addTransaction(
+            value: value,
+            description: _descriptionTextFieldController.text,
+            category: _transactionController.selectedCategory!,
+          );
+        } else {
+          await _transactionController.updateTransaction(
+            value: value,
+            description: descriptionParam,
+            category: _transactionController.selectedCategory!,
+            transaction: widget.transaction!,
+            transactionType:
+                _transactionController.transactionTypeSelected.name,
+          );
+        }
+
+        await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialogInfoComponent(
+              title: "Transação Atualizada",
+              description: "Sua transação foi atualizada com sucesso.",
+              actions: [
+                ActionModel(
+                  title: "Consultar transações",
+                  onTap: () {
+                    Navigator.of(context).pop();
+
+                    Modular.to.pushNamed("/home/dashboard");
+                  },
+                ),
+              ],
+              alertDialogType: AlertDialogType.info,
+            );
+          },
+        );
+      } else if (_transactionController.selectedCategory == null) {
+        throw CustomException(
+          title: "Campo vazio",
+          message: "Selecione uma categoria",
+        );
+      }
+    } on CustomException catch (e) {
+      await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialogCustomExceptionComponent(customException: e);
+        },
+      );
+    } catch (e) {
+      await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialogCustomExceptionComponent(
+            customException: CustomException(
+              title: "Erro",
+              message: "Ocorreu um erro ao atualizar a transação.",
             ),
           );
         },

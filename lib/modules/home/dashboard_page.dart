@@ -203,7 +203,6 @@ class _DashboardPageState extends State<DashboardPage> {
                       ),
                       const SizedBox(height: 32),
 
-                      // Botão para nova transação
                       InkWell(
                         onTap: () async {
                           await showModalBottomSheet(
@@ -211,8 +210,7 @@ class _DashboardPageState extends State<DashboardPage> {
                             isScrollControlled: true,
                             backgroundColor: Colors.transparent,
                             builder:
-                                (_) =>
-                                    const ModalBottomAddTransactionComponent(),
+                                (_) => ModalBottomAddTransactionComponent(),
                           );
                         },
                         child: Container(

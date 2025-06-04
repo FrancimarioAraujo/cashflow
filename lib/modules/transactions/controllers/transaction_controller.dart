@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cashflow/modules/auth/auth_controller.dart';
+import 'package:cashflow/modules/auth/models/user_model.dart';
 import 'package:cashflow/modules/transactions/models/transaction_model.dart';
 import 'package:cashflow/modules/transactions/repositories/transaction_repository.dart';
 import 'package:mobx/mobx.dart';
@@ -155,21 +156,37 @@ abstract class _TransactionControllerBase with Store {
   }
 
   @action
+  Future<void> updateTransaction({
+    required double value,
+    required String description,
+    required String category,
+    required TransactionModel transaction,
+    required String transactionType,
+  }) async {
+    try {
+      await transactionRepository.updateTransaction(
+        value: value,
+        description: description,
+        category: category,
+        transaction: transaction,
+        user: authController.user,
+        transactionType: transactionType,
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @action
   Future<void> deleteTransaction({
     required TransactionModel transaction,
   }) async {
     try {
-      if (transaction.transactionType == TransactionType.income.name) {
-        await transactionRepository.deleteIncome(
-          income: transaction,
-          user: authController.user,
-        );
-      } else {
-        await transactionRepository.deleteExpense(
-          expense: transaction,
-          user: authController.user,
-        );
-      }
+      await transactionRepository.deleteTransaction(
+        transaction: transaction,
+        user: authController.user,
+        transactionType: transaction.transactionType,
+      );
       await fetchTransactions();
     } catch (e) {
       rethrow;
