@@ -199,6 +199,16 @@ mixin _$TransactionController on _TransactionControllerBase, Store {
         value: value, description: description, category: category));
   }
 
+  late final _$deleteTransactionAsyncAction = AsyncAction(
+      '_TransactionControllerBase.deleteTransaction',
+      context: context);
+
+  @override
+  Future<void> deleteTransaction({required TransactionModel transaction}) {
+    return _$deleteTransactionAsyncAction
+        .run(() => super.deleteTransaction(transaction: transaction));
+  }
+
   late final _$_TransactionControllerBaseActionController =
       ActionController(name: '_TransactionControllerBase', context: context);
 

@@ -13,7 +13,7 @@ class _HomePageState extends State<HomePage> {
 
   final List<String> _routes = [
     '/home/dashboard',
-    '/home/add',
+
     '/home/reports',
     '/home/profile',
   ];
@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage> {
         unselectedItemColor: Colors.white,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'INÍCIO'),
-          BottomNavigationBarItem(icon: Icon(Icons.add), label: 'ADICIONAR'),
+
           BottomNavigationBarItem(
             icon: Icon(Icons.bar_chart),
             label: 'RELATÓRIOS',

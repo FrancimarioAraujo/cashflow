@@ -1,4 +1,4 @@
-import 'package:cashflow/modules/transactions/pages/add_page.dart';
+import 'package:cashflow/modules/transactions/components/modal_bottom_add_transaction_component.dart';
 import 'package:cashflow/modules/home/dashboard_page.dart';
 import 'package:cashflow/modules/home/profile_page.dart';
 import 'package:cashflow/modules/home/reports_page.dart';
@@ -18,7 +18,6 @@ class HomeModule extends Module {
       guards: [AuthGuard()],
       children: [
         ChildRoute('/dashboard', child: (context) => DashboardPage()),
-        ChildRoute('/add', child: (context) => AddPage()),
         ChildRoute('/reports', child: (context) => ReportsPage()),
         ChildRoute('/profile', child: (context) => ProfilePage()),
       ],

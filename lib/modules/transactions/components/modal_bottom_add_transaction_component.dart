@@ -10,14 +10,16 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter/services.dart';
 
-class AddPage extends StatefulWidget {
-  const AddPage({super.key});
+class ModalBottomAddTransactionComponent extends StatefulWidget {
+  const ModalBottomAddTransactionComponent({super.key});
 
   @override
-  State<AddPage> createState() => _AddPageState();
+  State<ModalBottomAddTransactionComponent> createState() =>
+      _ModalBottomAddTransactionComponentState();
 }
 
-class _AddPageState extends State<AddPage> {
+class _ModalBottomAddTransactionComponentState
+    extends State<ModalBottomAddTransactionComponent> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _valueTextFieldController =
       TextEditingController();
@@ -40,18 +42,7 @@ class _AddPageState extends State<AddPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        elevation: 0,
-        title: const Text(
-          "Adicionar Transação",
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFFFFD600),
-          ),
-        ),
-      ),
+      appBar: AppBar(backgroundColor: Colors.black, elevation: 0),
       body: Observer(
         builder: (context) {
           return SingleChildScrollView(
@@ -282,7 +273,8 @@ class _AddPageState extends State<AddPage> {
                         title: "Consultar transações",
                         onTap: () {
                           Navigator.of(context).pop();
-                          Modular.to.navigate("/home/dashboard");
+
+                          Modular.to.pushNamed("/home/dashboard");
                         },
                       ),
                     ],

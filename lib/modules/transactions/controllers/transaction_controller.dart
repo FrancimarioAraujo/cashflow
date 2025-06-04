@@ -94,10 +94,9 @@ abstract class _TransactionControllerBase with Store {
     transactions = ObservableList<TransactionModel>();
     await fetchIncomes();
     await fetchExpenses();
-    transactions = ObservableList<TransactionModel>.of([
-      ...incomes,
-      ...expenses,
-    ]);
+    transactions.addAll(incomes);
+    transactions.addAll(expenses);
+
     transactions.sort((a, b) => b.date.compareTo(a.date));
     isLoading = false;
   }

@@ -1,3 +1,4 @@
+import 'package:cashflow/modules/transactions/components/modal_bottom_add_transaction_component.dart';
 import 'package:cashflow/modules/transactions/controllers/transaction_controller.dart';
 import 'package:cashflow/modules/transactions/models/transaction_model.dart';
 import 'package:cashflow/shared/components/alert_dialog_info_component.dart';
@@ -70,38 +71,52 @@ class _TransactionComponentState extends State<TransactionComponent> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            IconButton(
-              icon: const Icon(Icons.delete, color: Colors.white),
-              onPressed: () async {
-                await showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialogInfoComponent(
-                      title: "Excluir transação",
-                      description:
-                          "Você tem certeza que deseja excluir esta transação?",
-                      actions: [
-                        ActionModel(
-                          title: "Cancelar",
-                          onTap: () {
-                            Modular.to.pop();
-                          },
-                        ),
-                        ActionModel(
-                          title: "Excluir",
-                          onTap: () async {
-                            await _transactionController.deleteTransaction(
-                              transaction: widget.transaction,
-                            );
-                            Modular.to.pop();
-                          },
-                        ),
-                      ],
-                      alertDialogType: AlertDialogType.important,
-                    );
-                  },
-                );
+            PopupMenuButton<int>(
+              icon: const Icon(Icons.more_vert, color: Colors.white),
+              onSelected: (value) async {
+                if (value == 0) {
+                  await showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialogInfoComponent(
+                        title: "Excluir transação",
+                        description:
+                            "Você tem certeza que deseja excluir esta transação?",
+                        actions: [
+                          ActionModel(
+                            title: "Cancelar",
+                            onTap: () {
+                              Modular.to.pop();
+                            },
+                          ),
+                          ActionModel(
+                            title: "Excluir",
+                            onTap: () async {
+                              await _transactionController.deleteTransaction(
+                                transaction: widget.transaction,
+                              );
+                              Modular.to.pop();
+                            },
+                          ),
+                        ],
+                        alertDialogType: AlertDialogType.important,
+                      );
+                    },
+                  );
+                } else if (value == 1) {
+                  await showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    builder: (_) => const ModalBottomAddTransactionComponent(),
+                  );
+                }
               },
+              itemBuilder:
+                  (context) => [
+                    const PopupMenuItem(value: 0, child: Text("Excluir")),
+                    const PopupMenuItem(value: 1, child: Text("Editar")),
+                  ],
             ),
           ],
         ),
