@@ -9,7 +9,7 @@ class TransactionRepository {
   Future<String> getIncomes({required UserModel user}) async {
     try {
       var response = await http.get(
-        Uri.parse("${UrlsUtil().getUrlApp()}/income"),
+        Uri.parse("${UrlsUtil().getUrlApp()}/income/${user.userId}"),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer ${user.token}",
@@ -18,10 +18,7 @@ class TransactionRepository {
       if (response.statusCode == 200) {
         return response.body;
       } else if (response.statusCode == 404) {
-        throw CustomException(
-          title: 'Usuário não encontrado',
-          message: "Não encontramos um usuário com esse email.",
-        );
+        return "[]";
       } else {
         throw CustomException(
           title: "Problema",
@@ -36,7 +33,7 @@ class TransactionRepository {
   Future<String> getExpenses({required UserModel user}) async {
     try {
       var response = await http.get(
-        Uri.parse("${UrlsUtil().getUrlApp()}/expense"),
+        Uri.parse("${UrlsUtil().getUrlApp()}/expense/${user.userId}"),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer ${user.token}",
@@ -45,10 +42,7 @@ class TransactionRepository {
       if (response.statusCode == 200) {
         return response.body;
       } else if (response.statusCode == 404) {
-        throw CustomException(
-          title: 'Usuário não encontrado',
-          message: "Não encontramos um usuário com esse email.",
-        );
+        return "[]";
       } else {
         throw CustomException(
           title: "Problema",

@@ -30,6 +30,13 @@ mixin _$TransactionController on _TransactionControllerBase, Store {
       (_$totalBalanceComputed ??= Computed<double>(() => super.totalBalance,
               name: '_TransactionControllerBase.totalBalance'))
           .value;
+  Computed<Map<String, dynamic>>? _$incomesByCategoryComputed;
+
+  @override
+  Map<String, dynamic> get incomesByCategory => (_$incomesByCategoryComputed ??=
+          Computed<Map<String, dynamic>>(() => super.incomesByCategory,
+              name: '_TransactionControllerBase.incomesByCategory'))
+      .value;
 
   late final _$transactionTypeSelectedAtom = Atom(
       name: '_TransactionControllerBase.transactionTypeSelected',
@@ -266,7 +273,8 @@ categoriesIncome: ${categoriesIncome},
 categoriesExpense: ${categoriesExpense},
 totalIncome: ${totalIncome},
 totalExpense: ${totalExpense},
-totalBalance: ${totalBalance}
+totalBalance: ${totalBalance},
+incomesByCategory: ${incomesByCategory}
     ''';
   }
 }

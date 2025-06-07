@@ -36,10 +36,6 @@ abstract class _TransactionControllerBase with Store {
   ObservableList<TransactionModel> transactions =
       ObservableList<TransactionModel>();
 
-  bool isSelectedCategory(String? category) {
-    return selectedCategory == category;
-  }
-
   @action
   void selectTransactionType(TransactionType type) {
     transactionTypeSelected = type;
@@ -83,10 +79,37 @@ abstract class _TransactionControllerBase with Store {
     return totalIncome - totalExpense;
   }
 
+  @computed
+  Map<String, dynamic> get incomesByCategory {
+    Map<String, dynamic> categoryTotals = {"categories": []};
+    double totalIncome = incomes.fold(0, (acc, income) => acc + income.valor);
+    for (var income in incomes) {
+      if (categoryTotals["categories"].any(
+        (element) => element["name"] == income.category,
+      )) {
+        var category = categoryTotals["categories"].firstWhere(
+          (element) => element["name"] == income.category,
+        );
+        category["value"] =
+            category["value"] + (income.valor / totalIncome) * 100;
+      } else {
+        categoryTotals["categories"].add({
+          "name": income.category,
+          "value": (income.valor / totalIncome) * 100,
+        });
+      }
+    }
+    return categoryTotals;
+  }
+
   List<String> getCategories() {
     return transactionTypeSelected == TransactionType.income
         ? categoriesIncome
         : categoriesExpense;
+  }
+
+  bool isSelectedCategory(String? category) {
+    return selectedCategory == category;
   }
 
   @action

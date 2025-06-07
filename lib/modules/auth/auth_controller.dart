@@ -12,7 +12,13 @@ abstract class _AuthControllerBase with Store {
 
   _AuthControllerBase({required this.authRepository});
   @observable
-  UserModel user = UserModel(name: '', email: '', password: '', token: '');
+  UserModel user = UserModel(
+    name: '',
+    email: '',
+    password: '',
+    token: '',
+    userId: '',
+  );
 
   @observable
   bool loading = false;
@@ -75,6 +81,7 @@ abstract class _AuthControllerBase with Store {
     UserModel user = UserModel.setData(
       json.decode(result)["value"],
       tokenValue: token,
+      userIdValue: json.decode(result)["key"],
     );
     return user;
   }

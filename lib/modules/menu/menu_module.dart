@@ -1,9 +1,9 @@
 import 'package:cashflow/modules/transactions/components/modal_bottom_add_transaction_component.dart';
-import 'package:cashflow/modules/home/dashboard_page.dart';
-import 'package:cashflow/modules/home/profile_page.dart';
-import 'package:cashflow/modules/home/reports_page.dart';
+import 'package:cashflow/modules/menu/dashboard_page.dart';
+import 'package:cashflow/modules/menu/profile_page.dart';
+import 'package:cashflow/modules/menu/reports_page.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:cashflow/modules/home/home_page.dart';
+import 'package:cashflow/modules/menu/menu_page.dart';
 import 'package:cashflow/shared/guards/auth_guard.dart';
 
 class HomeModule extends Module {
@@ -14,7 +14,7 @@ class HomeModule extends Module {
   void routes(r) {
     r.child(
       '/',
-      child: (context) => HomePage(),
+      child: (context) => MenuPage(),
       guards: [AuthGuard()],
       children: [
         ChildRoute('/dashboard', child: (context) => DashboardPage()),
