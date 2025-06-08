@@ -1,8 +1,7 @@
 import 'package:cashflow/shared/models/action_model.dart';
 import 'package:cashflow/shared/theme/constants/app_colors.dart';
+import 'package:cashflow/shared/util/enums.dart';
 import 'package:flutter/material.dart';
-
-enum AlertDialogType { info, attention, important, error }
 
 class AlertDialogInfoComponent extends StatelessWidget {
   final String title;

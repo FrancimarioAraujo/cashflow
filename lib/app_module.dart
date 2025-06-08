@@ -1,5 +1,6 @@
 import 'package:cashflow/modules/auth/auth_controller.dart';
 import 'package:cashflow/modules/auth/auth_repository.dart';
+import 'package:cashflow/modules/menu/controllers/reports_controller.dart';
 import 'package:cashflow/modules/transactions/controllers/transaction_controller.dart';
 import 'package:cashflow/modules/transactions/transaction_module.dart';
 import 'package:cashflow/modules/transactions/repositories/transaction_repository.dart';
@@ -15,6 +16,7 @@ class AppModule extends Module {
     i.addSingleton(AuthController.new);
     i.addSingleton(TransactionRepository.new);
     i.addSingleton(TransactionController.new);
+    i.addSingleton(ReportsController.new);
   }
 
   @override

@@ -4,6 +4,7 @@ import 'package:cashflow/modules/auth/auth_controller.dart';
 import 'package:cashflow/modules/auth/models/user_model.dart';
 import 'package:cashflow/modules/transactions/models/transaction_model.dart';
 import 'package:cashflow/modules/transactions/repositories/transaction_repository.dart';
+import 'package:cashflow/shared/util/enums.dart';
 import 'package:mobx/mobx.dart';
 part 'transaction_controller.g.dart';
 
@@ -216,5 +217,3 @@ abstract class _TransactionControllerBase with Store {
     }
   }
 }
-
-enum TransactionType { income, expense }

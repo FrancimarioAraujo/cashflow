@@ -6,6 +6,7 @@ import 'package:cashflow/shared/models/action_model.dart';
 import 'package:cashflow/shared/theme/constants/app_border_radius.dart';
 import 'package:cashflow/shared/theme/constants/app_colors.dart';
 import 'package:cashflow/shared/theme/constants/app_paddings.dart';
+import 'package:cashflow/shared/util/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:cashflow/shared/validators/complete_name_validator.dart';
@@ -255,7 +256,8 @@ class _SignUpPageState extends State<SignUpPage> {
                       ActionModel(
                         title: "Fazer Login",
                         onTap: () {
-                          Modular.to.pushNamed('/auth');
+                          Navigator.of(context).pop();
+                          Modular.to.navigate('/auth/');
                         },
                       ),
                     ],

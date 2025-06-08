@@ -36,7 +36,7 @@ class _ReportsPageState extends State<ReportsPage> {
               style: TextStyle(color: Colors.white),
               items:
                   ['Mensal', 'Semanal']
-                      .map((e) => DropdownMenuItem(child: Text(e), value: e))
+                      .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                       .toList(),
               onChanged: (_) {},
             ),

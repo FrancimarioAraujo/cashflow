@@ -24,6 +24,14 @@ class UserModel {
     userId = userIdValue;
   }
 
+  UserModel.copy(UserModel userParam) {
+    userId = userParam.userId;
+    name = userParam.name;
+    email = userParam.email;
+    password = userParam.password;
+    token = userParam.token;
+  }
+
   UserModel.cleanData() {
     name = "";
     email = "";

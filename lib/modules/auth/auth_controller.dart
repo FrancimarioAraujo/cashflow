@@ -95,7 +95,9 @@ abstract class _AuthControllerBase with Store {
   Future<String> deleteUser() async {
     try {
       loading = true;
-      String result = await authRepository.deleteUser(user);
+      UserModel userCopy = UserModel.copy(user);
+      await logout();
+      String result = await authRepository.deleteUser(userCopy);
       loading = false;
       return result;
     } catch (e) {

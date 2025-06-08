@@ -1,4 +1,5 @@
 import 'package:cashflow/modules/transactions/controllers/transaction_controller.dart';
+import 'package:cashflow/shared/util/enums.dart';
 
 class TransactionModel {
   final String key;

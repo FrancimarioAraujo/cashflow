@@ -203,7 +203,7 @@ class _LoginPageState extends State<LoginPage> {
     try {
       await _authController.login(email, password);
       if (_authController.isLoggedIn) {
-        Modular.to.pushReplacementNamed('/home/');
+        Modular.to.navigate('/home/');
       }
     } on CustomException catch (customException) {
       await showDialog(

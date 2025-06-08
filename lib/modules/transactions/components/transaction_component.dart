@@ -3,6 +3,7 @@ import 'package:cashflow/modules/transactions/controllers/transaction_controller
 import 'package:cashflow/modules/transactions/models/transaction_model.dart';
 import 'package:cashflow/shared/components/alert_dialog_info_component.dart';
 import 'package:cashflow/shared/models/action_model.dart';
+import 'package:cashflow/shared/util/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:intl/intl.dart';

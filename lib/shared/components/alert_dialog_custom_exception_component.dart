@@ -1,6 +1,7 @@
 import 'package:cashflow/shared/components/alert_dialog_info_component.dart';
 import 'package:cashflow/shared/exceptions/custom_exception.dart';
 import 'package:cashflow/shared/models/action_model.dart';
+import 'package:cashflow/shared/util/enums.dart';
 import 'package:flutter/material.dart';
 
 class AlertDialogCustomExceptionComponent extends StatefulWidget {
