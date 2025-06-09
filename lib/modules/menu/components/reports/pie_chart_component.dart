@@ -24,7 +24,7 @@ class _PieChartComponentState extends State<PieChartComponent> {
       Modular.get<TransactionController>();
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 300,
       child: PieChart(
         PieChartData(

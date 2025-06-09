@@ -40,18 +40,6 @@ class _ReportsPageState extends State<ReportsPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                DropdownButton<String>(
-                  value: 'Mensal',
-                  dropdownColor: Colors.grey[900],
-                  style: TextStyle(color: Colors.white),
-                  items:
-                      ['Mensal', 'Semanal']
-                          .map(
-                            (e) => DropdownMenuItem(value: e, child: Text(e)),
-                          )
-                          .toList(),
-                  onChanged: (_) {},
-                ),
                 const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -122,14 +110,6 @@ class _ReportsPageState extends State<ReportsPage> {
                     ),
                     child: Column(
                       children: [
-                        Text(
-                          'Balanço Mensal',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        Text(
-                          'Abril 2025',
-                          style: TextStyle(color: Colors.white70),
-                        ),
                         const SizedBox(height: 10),
                         Expanded(
                           child: PieChartComponent(
@@ -192,15 +172,11 @@ class _ReportsPageState extends State<ReportsPage> {
       children: [
         Text(
           label,
-          style: TextStyle(
-            color: color,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
+          style: TextStyle(color: color, fontWeight: FontWeight.bold),
         ),
         Text(
           NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$').format(value),
-          style: TextStyle(color: color, fontSize: 20),
+          style: TextStyle(color: color),
         ),
       ],
     );
