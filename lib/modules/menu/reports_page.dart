@@ -18,6 +18,39 @@ class _ReportsPageState extends State<ReportsPage> {
   TransactionController transactionController =
       Modular.get<TransactionController>();
   ReportsController reportsController = Modular.get<ReportsController>();
+
+  void _selectStartDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: reportsController.startDate,
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null) {
+      reportsController.setStartDate(picked);
+    }
+  }
+
+  void _selectEndDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: reportsController.endDate,
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null) {
+      reportsController.setEndDate(picked);
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    reportsController.setStartDate(DateTime.now().subtract(Duration(days: 30)));
+    reportsController.setEndDate(DateTime.now());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Observer(
@@ -40,7 +73,47 @@ class _ReportsPageState extends State<ReportsPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    ElevatedButton.icon(
+                      onPressed: () => _selectStartDate(context),
+                      icon: Icon(Icons.date_range, color: Colors.white),
+                      label: Text(
+                        DateFormat(
+                          'dd/MM/yyyy',
+                        ).format(reportsController.startDate),
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey[850],
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                      ),
+                    ),
+                    ElevatedButton.icon(
+                      onPressed: () => _selectEndDate(context),
+                      icon: Icon(Icons.date_range, color: Colors.white),
+                      label: Text(
+                        DateFormat(
+                          'dd/MM/yyyy',
+                        ).format(reportsController.endDate),
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey[850],
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                // Botões de filtro
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
@@ -113,10 +186,8 @@ class _ReportsPageState extends State<ReportsPage> {
                         const SizedBox(height: 10),
                         Expanded(
                           child: PieChartComponent(
-                            colors: _getColorsReport(
-                              reportsController.transactionReportTypeSelected,
-                            ),
-                            categories: _getCategories(),
+                            colors: reportsController.getColorsReport(),
+                            categories: reportsController.getCategories(),
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -131,7 +202,10 @@ class _ReportsPageState extends State<ReportsPage> {
                                     TransactionReportType.income)
                               _buildAmount(
                                 "Receitas",
-                                transactionController.totalIncome,
+                                transactionController.totalIncome(
+                                  startDate: reportsController.startDate,
+                                  endDate: reportsController.endDate,
+                                ),
                                 Colors.green,
                               ),
                             if (reportsController
@@ -142,7 +216,10 @@ class _ReportsPageState extends State<ReportsPage> {
                                     TransactionReportType.expense)
                               _buildAmount(
                                 "Despesas",
-                                transactionController.totalExpense,
+                                transactionController.totalExpense(
+                                  startDate: reportsController.startDate,
+                                  endDate: reportsController.endDate,
+                                ),
                                 Colors.red,
                               ),
                             if (reportsController
@@ -150,7 +227,10 @@ class _ReportsPageState extends State<ReportsPage> {
                                 TransactionReportType.all)
                               _buildAmount(
                                 "Saldo",
-                                transactionController.totalBalance,
+                                transactionController.totalBalance(
+                                  startDate: reportsController.startDate,
+                                  endDate: reportsController.endDate,
+                                ),
                                 Colors.white,
                               ),
                           ],
@@ -180,40 +260,5 @@ class _ReportsPageState extends State<ReportsPage> {
         ),
       ],
     );
-  }
-
-  List _getCategories() {
-    if (reportsController.transactionReportTypeSelected ==
-        TransactionReportType.income) {
-      return transactionController.incomesByCategory["categories"];
-    } else if (reportsController.transactionReportTypeSelected ==
-        TransactionReportType.expense) {
-      return transactionController.expensesByCategory["categories"];
-    } else {
-      return transactionController.incomesVsExpensesByCategory["categories"];
-    }
-  }
-
-  List<Color> _getColorsReport(TransactionReportType typeReport) {
-    switch (typeReport) {
-      case TransactionReportType.income:
-        return [
-          Color(0xFF2C6E49),
-          Color(0xFFFF8C00),
-          Color(0xFF00008B),
-          Color(0xFFD4AF37),
-        ];
-      case TransactionReportType.expense:
-        return [
-          Color(0xFFC62828),
-          Color(0xFFEF6C00),
-          Color(0xFF424242),
-          Color(0xFF77216F),
-          Color(0xFF795548),
-          Color(0xFFFFC107),
-        ];
-      default:
-        return [Color(0xFF2C6E49), Color(0xFFC62828)];
-    }
   }
 }

@@ -83,7 +83,7 @@ class _DashboardPageState extends State<DashboardPage> {
                               NumberFormat.currency(
                                 locale: 'pt_BR',
                                 symbol: 'R\$',
-                              ).format(_transactionController.totalBalance),
+                              ).format(_transactionController.totalBalance()),
                               style: const TextStyle(
                                 fontSize: 36,
                                 fontWeight: FontWeight.bold,
@@ -136,7 +136,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                       locale: 'pt_BR',
                                       symbol: 'R\$',
                                     ).format(
-                                      _transactionController.totalIncome,
+                                      _transactionController.totalIncome(),
                                     ),
                                     style: const TextStyle(
                                       fontSize: 18,
@@ -187,7 +187,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                       locale: 'pt_BR',
                                       symbol: 'R\$',
                                     ).format(
-                                      _transactionController.totalExpense,
+                                      _transactionController.totalExpense(),
                                     ),
                                     style: const TextStyle(
                                       fontSize: 18,

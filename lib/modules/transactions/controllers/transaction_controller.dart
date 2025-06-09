@@ -65,59 +65,123 @@ abstract class _TransactionControllerBase with Store {
     "outros",
   ];
 
-  @computed
-  double get totalIncome {
-    return incomes.fold(0.0, (prev, element) => prev + element.valor);
+  double totalIncome({DateTime? startDate, DateTime? endDate}) {
+    if (startDate == null || endDate == null) {
+      return incomes.fold(0.0, (prev, element) => prev + element.valor);
+    } else {
+      final start = DateTime(startDate.year, startDate.month, startDate.day);
+      final end = DateTime(
+        endDate.year,
+        endDate.month,
+        endDate.day,
+        23,
+        59,
+        59,
+        999,
+      );
+
+      List<TransactionModel> filtered =
+          incomes.where((income) {
+            return (income.date.isAtSameMomentAs(start) ||
+                income.date.isAtSameMomentAs(end) ||
+                (income.date.isAfter(start) && income.date.isBefore(end)));
+          }).toList();
+
+      return filtered.fold(0.0, (prev, element) => prev + element.valor);
+    }
   }
 
-  @computed
-  double get totalExpense {
-    return expenses.fold(0.0, (prev, element) => prev + element.valor);
+  double totalExpense({DateTime? startDate, DateTime? endDate}) {
+    if (startDate == null || endDate == null) {
+      return expenses.fold(0.0, (prev, element) => prev + element.valor);
+    } else {
+      // Ajusta datas para o dia (começo e fim)
+      final start = DateTime(startDate.year, startDate.month, startDate.day);
+      final end = DateTime(
+        endDate.year,
+        endDate.month,
+        endDate.day,
+        23,
+        59,
+        59,
+        999,
+      );
+
+      List<TransactionModel> filtered =
+          expenses.where((expense) {
+            return (expense.date.isAtSameMomentAs(start) ||
+                expense.date.isAtSameMomentAs(end) ||
+                (expense.date.isAfter(start) && expense.date.isBefore(end)));
+          }).toList();
+
+      return filtered.fold(0.0, (prev, element) => prev + element.valor);
+    }
   }
 
-  @computed
-  double get totalBalance {
-    return totalIncome - totalExpense;
+  double totalBalance({DateTime? startDate, DateTime? endDate}) {
+    return totalIncome(startDate: startDate, endDate: endDate) -
+        totalExpense(startDate: startDate, endDate: endDate);
   }
 
-  @computed
-  Map<String, dynamic> get expensesByCategory {
-    return _calculateByCategory(expenses, 'category');
+  Map<String, dynamic> getExpensesByCategory(
+    DateTime startDate,
+    DateTime endDate,
+  ) {
+    return _calculateByCategory(expenses, 'category', startDate, endDate);
   }
 
-  @computed
-  Map<String, dynamic> get incomesByCategory {
-    return _calculateByCategory(incomes, 'category');
+  Map<String, dynamic> getIncomesByCategory(
+    DateTime startDate,
+    DateTime endDate,
+  ) {
+    return _calculateByCategory(incomes, 'category', startDate, endDate);
   }
 
-  @computed
-  Map<String, dynamic> get incomesVsExpensesByCategory {
-    double totalIncome = incomes.fold(
+  Map<String, dynamic> incomesVsExpensesByCategory(
+    DateTime startDate,
+    DateTime endDate,
+  ) {
+    var filteredIncomes =
+        incomes.where((income) {
+          return income.date.isAfter(startDate.subtract(Duration(days: 1))) &&
+              income.date.isBefore(endDate.add(Duration(days: 1)));
+        }).toList();
+
+    var filteredExpenses =
+        expenses.where((expense) {
+          return expense.date.isAfter(startDate.subtract(Duration(days: 1))) &&
+              expense.date.isBefore(endDate.add(Duration(days: 1)));
+        }).toList();
+
+    double totalIncome = filteredIncomes.fold(
       0.0,
       (prev, element) => prev + element.valor,
     );
-    double totalExpense = expenses.fold(
+    double totalExpense = filteredExpenses.fold(
       0.0,
       (prev, element) => prev + element.valor,
     );
+
+    double total = totalIncome + totalExpense;
+
     Map<String, dynamic> result = {
       "categories": [
         {
           "name": "Receitas",
-          "value":
-              totalIncome == 0
-                  ? 0.0
-                  : (totalIncome / (totalIncome + totalExpense)) * 100,
+          "value": total == 0 ? 0.0 : (totalIncome / total) * 100,
         },
         {
           "name": "Despesas",
-          "value":
-              totalExpense == 0
-                  ? 0.0
-                  : (totalExpense / (totalIncome + totalExpense)) * 100,
+          "value": total == 0 ? 0.0 : (totalExpense / total) * 100,
         },
       ],
     };
+    if (total == 0) {
+      return {"categories": [
+        
+      ],
+    };
+    }
 
     return result;
   }
@@ -125,13 +189,26 @@ abstract class _TransactionControllerBase with Store {
   Map<String, dynamic> _calculateByCategory(
     List<TransactionModel> transactions,
     String categoryKey,
+    DateTime startDate,
+    DateTime endDate,
   ) {
+    // Filtra as transações entregues dentro do período
+    var filteredTransactions =
+        transactions.where((transaction) {
+          return transaction.date.isAfter(
+                startDate.subtract(Duration(days: 1)),
+              ) &&
+              transaction.date.isBefore(endDate.add(Duration(days: 1)));
+        }).toList();
+
     Map<String, dynamic> categoryTotals = {"categories": []};
-    double totalAmount = transactions.fold(
+
+    double totalAmount = filteredTransactions.fold(
       0,
       (acc, transaction) => acc + transaction.valor,
     );
-    for (var transaction in transactions) {
+
+    for (var transaction in filteredTransactions) {
       if (categoryTotals["categories"].any(
         (element) => element["name"] == transaction.category,
       )) {

@@ -4,6 +4,7 @@ import 'package:cashflow/modules/transactions/controllers/transaction_controller
 import 'package:cashflow/shared/util/strings_util.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 class PieChartComponent extends StatefulWidget {
@@ -24,15 +25,30 @@ class _PieChartComponentState extends State<PieChartComponent> {
       Modular.get<TransactionController>();
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 300,
-      child: PieChart(
-        PieChartData(
-          sections: getSections(),
-          sectionsSpace: 2,
-          centerSpaceRadius: 40,
-        ),
-      ),
+    return Observer(
+      builder: (context) {
+        if (widget.categories.isEmpty) {
+          return SizedBox(
+            height: 300,
+            child: Center(
+              child: Text(
+                'Nenhum dado disponível',
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+              ),
+            ),
+          );
+        }
+        return SizedBox(
+          height: 300,
+          child: PieChart(
+            PieChartData(
+              sections: getSections(),
+              sectionsSpace: 2,
+              centerSpaceRadius: 40,
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -48,7 +64,7 @@ class _PieChartComponentState extends State<PieChartComponent> {
       String title = StringsUtil().capitalize(category['name']);
       sections.add(
         PieChartSectionData(
-          color: color,
+          color: category['name'] == "Receitas" ? Color(0xFF2C6E49) : color,
           value: category['value'],
           title: title,
           radius: 80,

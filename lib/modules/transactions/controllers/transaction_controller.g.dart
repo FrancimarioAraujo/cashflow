@@ -9,51 +9,6 @@ part of 'transaction_controller.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$TransactionController on _TransactionControllerBase, Store {
-  Computed<double>? _$totalIncomeComputed;
-
-  @override
-  double get totalIncome =>
-      (_$totalIncomeComputed ??= Computed<double>(() => super.totalIncome,
-              name: '_TransactionControllerBase.totalIncome'))
-          .value;
-  Computed<double>? _$totalExpenseComputed;
-
-  @override
-  double get totalExpense =>
-      (_$totalExpenseComputed ??= Computed<double>(() => super.totalExpense,
-              name: '_TransactionControllerBase.totalExpense'))
-          .value;
-  Computed<double>? _$totalBalanceComputed;
-
-  @override
-  double get totalBalance =>
-      (_$totalBalanceComputed ??= Computed<double>(() => super.totalBalance,
-              name: '_TransactionControllerBase.totalBalance'))
-          .value;
-  Computed<Map<String, dynamic>>? _$expensesByCategoryComputed;
-
-  @override
-  Map<String, dynamic> get expensesByCategory =>
-      (_$expensesByCategoryComputed ??= Computed<Map<String, dynamic>>(
-              () => super.expensesByCategory,
-              name: '_TransactionControllerBase.expensesByCategory'))
-          .value;
-  Computed<Map<String, dynamic>>? _$incomesByCategoryComputed;
-
-  @override
-  Map<String, dynamic> get incomesByCategory => (_$incomesByCategoryComputed ??=
-          Computed<Map<String, dynamic>>(() => super.incomesByCategory,
-              name: '_TransactionControllerBase.incomesByCategory'))
-      .value;
-  Computed<Map<String, dynamic>>? _$incomesVsExpensesByCategoryComputed;
-
-  @override
-  Map<String, dynamic> get incomesVsExpensesByCategory =>
-      (_$incomesVsExpensesByCategoryComputed ??= Computed<Map<String, dynamic>>(
-              () => super.incomesVsExpensesByCategory,
-              name: '_TransactionControllerBase.incomesVsExpensesByCategory'))
-          .value;
-
   late final _$transactionTypeSelectedAtom = Atom(
       name: '_TransactionControllerBase.transactionTypeSelected',
       context: context);
@@ -286,13 +241,7 @@ incomes: ${incomes},
 expenses: ${expenses},
 transactions: ${transactions},
 categoriesIncome: ${categoriesIncome},
-categoriesExpense: ${categoriesExpense},
-totalIncome: ${totalIncome},
-totalExpense: ${totalExpense},
-totalBalance: ${totalBalance},
-expensesByCategory: ${expensesByCategory},
-incomesByCategory: ${incomesByCategory},
-incomesVsExpensesByCategory: ${incomesVsExpensesByCategory}
+categoriesExpense: ${categoriesExpense}
     ''';
   }
 }
