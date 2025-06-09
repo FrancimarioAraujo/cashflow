@@ -30,6 +30,14 @@ mixin _$TransactionController on _TransactionControllerBase, Store {
       (_$totalBalanceComputed ??= Computed<double>(() => super.totalBalance,
               name: '_TransactionControllerBase.totalBalance'))
           .value;
+  Computed<Map<String, dynamic>>? _$expensesByCategoryComputed;
+
+  @override
+  Map<String, dynamic> get expensesByCategory =>
+      (_$expensesByCategoryComputed ??= Computed<Map<String, dynamic>>(
+              () => super.expensesByCategory,
+              name: '_TransactionControllerBase.expensesByCategory'))
+          .value;
   Computed<Map<String, dynamic>>? _$incomesByCategoryComputed;
 
   @override
@@ -37,6 +45,14 @@ mixin _$TransactionController on _TransactionControllerBase, Store {
           Computed<Map<String, dynamic>>(() => super.incomesByCategory,
               name: '_TransactionControllerBase.incomesByCategory'))
       .value;
+  Computed<Map<String, dynamic>>? _$incomesVsExpensesByCategoryComputed;
+
+  @override
+  Map<String, dynamic> get incomesVsExpensesByCategory =>
+      (_$incomesVsExpensesByCategoryComputed ??= Computed<Map<String, dynamic>>(
+              () => super.incomesVsExpensesByCategory,
+              name: '_TransactionControllerBase.incomesVsExpensesByCategory'))
+          .value;
 
   late final _$transactionTypeSelectedAtom = Atom(
       name: '_TransactionControllerBase.transactionTypeSelected',
@@ -274,7 +290,9 @@ categoriesExpense: ${categoriesExpense},
 totalIncome: ${totalIncome},
 totalExpense: ${totalExpense},
 totalBalance: ${totalBalance},
-incomesByCategory: ${incomesByCategory}
+expensesByCategory: ${expensesByCategory},
+incomesByCategory: ${incomesByCategory},
+incomesVsExpensesByCategory: ${incomesVsExpensesByCategory}
     ''';
   }
 }

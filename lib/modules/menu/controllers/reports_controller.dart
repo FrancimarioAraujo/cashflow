@@ -6,10 +6,15 @@ class ReportsController = _ReportsControllerBase with _$ReportsController;
 
 abstract class _ReportsControllerBase with Store {
   @observable
-  TransactionReportType transactionReportType = TransactionReportType.all;
+  TransactionReportType transactionReportTypeSelected =
+      TransactionReportType.all;
 
   @action
   void setTransactionReportType(TransactionReportType type) {
-    transactionReportType = type;
+    transactionReportTypeSelected = type;
+  }
+
+  bool isSelected(TransactionReportType type) {
+    return transactionReportTypeSelected == type;
   }
 }

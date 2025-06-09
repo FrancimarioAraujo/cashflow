@@ -9,20 +9,21 @@ part of 'reports_controller.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$ReportsController on _ReportsControllerBase, Store {
-  late final _$transactionReportTypeAtom = Atom(
-      name: '_ReportsControllerBase.transactionReportType', context: context);
+  late final _$transactionReportTypeSelectedAtom = Atom(
+      name: '_ReportsControllerBase.transactionReportTypeSelected',
+      context: context);
 
   @override
-  TransactionReportType get transactionReportType {
-    _$transactionReportTypeAtom.reportRead();
-    return super.transactionReportType;
+  TransactionReportType get transactionReportTypeSelected {
+    _$transactionReportTypeSelectedAtom.reportRead();
+    return super.transactionReportTypeSelected;
   }
 
   @override
-  set transactionReportType(TransactionReportType value) {
-    _$transactionReportTypeAtom.reportWrite(value, super.transactionReportType,
-        () {
-      super.transactionReportType = value;
+  set transactionReportTypeSelected(TransactionReportType value) {
+    _$transactionReportTypeSelectedAtom
+        .reportWrite(value, super.transactionReportTypeSelected, () {
+      super.transactionReportTypeSelected = value;
     });
   }
 
@@ -43,7 +44,7 @@ mixin _$ReportsController on _ReportsControllerBase, Store {
   @override
   String toString() {
     return '''
-transactionReportType: ${transactionReportType}
+transactionReportTypeSelected: ${transactionReportTypeSelected}
     ''';
   }
 }

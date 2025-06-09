@@ -1,15 +1,19 @@
 import 'dart:math';
 
 import 'package:cashflow/modules/transactions/controllers/transaction_controller.dart';
-import 'package:cashflow/shared/theme/constants/app_colors.dart';
 import 'package:cashflow/shared/util/strings_util.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 class PieChartComponent extends StatefulWidget {
-  const PieChartComponent({super.key});
+  List<Color> colors;
+  List categories;
+  PieChartComponent({
+    super.key,
+    required this.colors,
+    required this.categories,
+  });
 
   @override
   State<PieChartComponent> createState() => _PieChartComponentState();
@@ -33,26 +37,18 @@ class _PieChartComponentState extends State<PieChartComponent> {
   }
 
   List<PieChartSectionData> getSections() {
-    List<Color> colors = [
-      AppColors.amber,
-      AppColors.red,
-      AppColors.emeraldGreen,
-      AppColors.cobaltBlue,
-    ];
     List<PieChartSectionData> sections = [];
-    List incomeCategories =
-        transactionController.incomesByCategory["categories"];
 
-    List<Color> coresAleatorias = colors.toList();
+    List<Color> randomColors = widget.colors.toList();
 
-    for (var category in incomeCategories) {
-      Color cor = coresAleatorias.removeAt(
-        Random().nextInt(coresAleatorias.length),
+    for (var category in widget.categories) {
+      Color color = randomColors.removeAt(
+        Random().nextInt(randomColors.length),
       );
       String title = StringsUtil().capitalize(category['name']);
       sections.add(
         PieChartSectionData(
-          color: cor,
+          color: color,
           value: category['value'],
           title: title,
           radius: 80,

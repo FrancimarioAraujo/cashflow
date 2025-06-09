@@ -81,22 +81,69 @@ abstract class _TransactionControllerBase with Store {
   }
 
   @computed
+  Map<String, dynamic> get expensesByCategory {
+    return _calculateByCategory(expenses, 'category');
+  }
+
+  @computed
   Map<String, dynamic> get incomesByCategory {
+    return _calculateByCategory(incomes, 'category');
+  }
+
+  @computed
+  Map<String, dynamic> get incomesVsExpensesByCategory {
+    double totalIncome = incomes.fold(
+      0.0,
+      (prev, element) => prev + element.valor,
+    );
+    double totalExpense = expenses.fold(
+      0.0,
+      (prev, element) => prev + element.valor,
+    );
+    Map<String, dynamic> result = {
+      "categories": [
+        {
+          "name": "Receitas",
+          "value":
+              totalIncome == 0
+                  ? 0.0
+                  : (totalIncome / (totalIncome + totalExpense)) * 100,
+        },
+        {
+          "name": "Despesas",
+          "value":
+              totalExpense == 0
+                  ? 0.0
+                  : (totalExpense / (totalIncome + totalExpense)) * 100,
+        },
+      ],
+    };
+
+    return result;
+  }
+
+  Map<String, dynamic> _calculateByCategory(
+    List<TransactionModel> transactions,
+    String categoryKey,
+  ) {
     Map<String, dynamic> categoryTotals = {"categories": []};
-    double totalIncome = incomes.fold(0, (acc, income) => acc + income.valor);
-    for (var income in incomes) {
+    double totalAmount = transactions.fold(
+      0,
+      (acc, transaction) => acc + transaction.valor,
+    );
+    for (var transaction in transactions) {
       if (categoryTotals["categories"].any(
-        (element) => element["name"] == income.category,
+        (element) => element["name"] == transaction.category,
       )) {
         var category = categoryTotals["categories"].firstWhere(
-          (element) => element["name"] == income.category,
+          (element) => element["name"] == transaction.category,
         );
         category["value"] =
-            category["value"] + (income.valor / totalIncome) * 100;
+            category["value"] + (transaction.valor / totalAmount) * 100;
       } else {
         categoryTotals["categories"].add({
-          "name": income.category,
-          "value": (income.valor / totalIncome) * 100,
+          "name": transaction.category,
+          "value": (transaction.valor / totalAmount) * 100,
         });
       }
     }
